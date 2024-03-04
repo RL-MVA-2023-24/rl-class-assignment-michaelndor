@@ -20,7 +20,6 @@ import numpy as np
 import os
 from tqdm import tqdm
 from sklearn.ensemble import RandomForestRegressor
-import joblib   # Use this import instead if you have a newer version of scikit-learn
 
 env = TimeLimit(
     env=HIVPatient(domain_randomization=False), max_episode_steps=200
@@ -63,7 +62,7 @@ class ProjectAgent:
             net_pop = self.model_pop
             device = "cuda" if next(network.parameters()).is_cuda else "cpu"
             with torch.no_grad():
-                Q = network(torch.Tensor(observation).unsqueeze(0).to(device))*0.32 + net_pop(torch.Tensor(observation).unsqueeze(0).to(device))
+                Q = network(torch.Tensor(observation).unsqueeze(0).to(device)) + 0.7*net_pop(torch.Tensor(observation).unsqueeze(0).to(device))
                 return torch.argmax(Q).item()
         else :
             return np.random.randint(4)
